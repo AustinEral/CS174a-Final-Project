@@ -1,7 +1,7 @@
 import {defs, tiny} from './examples/common.js';
 
 const {
-    Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene,
+    Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture,
 } = tiny;
 
 export class Final_Project extends Scene {
@@ -20,7 +20,7 @@ export class Final_Project extends Scene {
             sphere1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
             sphere2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             sphere3: new defs.Subdivision_Sphere(3),
-            sphere4: new defs.Subdivision_Sphere(5),
+            sphere4: new defs.Subdivision_Sphere(3),
             triangle: new defs.Triangle(),
             box: new defs.Cube(),
         };
@@ -36,7 +36,7 @@ export class Final_Project extends Scene {
             //        (Requirement 4)
             room: new Material(new defs.Phong_Shader(),
                 {ambient: 0.1, diffusivity: 0.8, specularity: 0.3, color: color(0.6,0.6,0.8,1)}),
-            sphere1: new Material(new defs.Phong_Shader(),
+            sphere1: new Material(new Gouraud_Shader(),
                 {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(1,0.7,0,1), smoothness: 40, time: 0}),
             sphere2: new Material(new defs.Phong_Shader(),
                 {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(0,0.8,0.8,1)}),
@@ -45,6 +45,10 @@ export class Final_Project extends Scene {
             light: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 0, specularity: 0, color: color(1,1,1,1)}),
         }
+        this.bumps = new Material(new defs.Fake_Bump_Map(1), {
+            color: color(.5, .5, .5, 1),
+            ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/brick.png")
+        });
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 5, 20), vec3(0, 0, 0), vec3(0, 1, 0)).times(Mat4.translation(0, -5, -10, 1));
     }
@@ -118,7 +122,7 @@ export class Final_Project extends Scene {
         this.shapes.sphere4.draw(context, program_state, sphere_transform1, this.materials.sphere1.override({time: t}));
         
         let sphere_transform2 = origin.times(Mat4.translation(0, 3, -6, 1));
-        this.shapes.sphere4.draw(context, program_state, sphere_transform2, this.materials.sphere2);
+        this.shapes.sphere4.draw(context, program_state, sphere_transform2, this.bumps);
 
         let sphere_transform3 = origin.times(Mat4.translation(6, 7, -2, 1));
         this.shapes.sphere4.draw(context, program_state, sphere_transform3, this.materials.sphere3);
@@ -191,6 +195,7 @@ class Gouraud_Shader extends Shader {
     }
 
     vertex_glsl_code() {
+        let rand = Math.random();
         // ********* VERTEX SHADER *********
         return this.shared_glsl_code() + `
             attribute vec3 position, normal;                            
@@ -199,10 +204,11 @@ class Gouraud_Shader extends Shader {
             uniform mat4 model_transform;
             uniform mat4 projection_camera_model_transform;
 
+            
+
             varying vec3 color;
-            void main(){                                                                   
-                // The vertex's final resting place (in NDCS):
-                gl_Position = projection_camera_model_transform * vec4( position, 1.0 );
+            void main(){
+                gl_Position = projection_camera_model_transform * vec4( position, `+ 1.0 + ` );
                 // The final normal vector in screen space.
                 N = normalize( mat3( model_transform ) * normal / squared_scale);
                 vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;

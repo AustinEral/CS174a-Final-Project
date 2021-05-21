@@ -113,7 +113,7 @@ export class Obj_File_Demo extends Scene {                           // **Obj_Fi
     constructor() {
         super();
         // Load the model file:
-        this.shapes = {"teapot": new Shape_From_File("assets/bugatti.obj")};
+        this.shapes = {"teapot": new Shape_From_File("assets/teapot.obj")};
 
         // Don't create any DOM elements to control this scene:
         this.widget_options = {make_controls: false};
@@ -142,7 +142,7 @@ export class Obj_File_Demo extends Scene {                           // **Obj_Fi
             const model_transform = Mat4.rotation(0 / 2000, 0, 2, 1)
                 .times(Mat4.rotation(0 / 1500, -1, 2, 0))
                 .times(Mat4.rotation(-Math.PI / 2, 1, 0, 0));
-            this.shapes.teapot.draw(context, program_state, model_transform, this.stars);
+            this.shapes.teapot.draw(context, program_state, model_transform, this.bumps);
     }
 
     show_explanation(document_element) {
