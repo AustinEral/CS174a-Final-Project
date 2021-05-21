@@ -109,6 +109,7 @@ export class Final_Project extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
         super();
+        this.terrain = new Terrain(new Vector3(0, 0, 0), 800);
 
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
@@ -165,9 +166,8 @@ export class Final_Project extends Scene {
             ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
-
+        
         this.initial_camera_location = Mat4.look_at(vec3(0, 5, 20), vec3(0, 0, 0), vec3(0, 1, 0)).times(Mat4.translation(0, -5, -10, 1));
-
         
     }
 
@@ -201,39 +201,41 @@ export class Final_Project extends Scene {
         // Time
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         const yellow = hex_color("#fac91a");
-        
+        this.terrain.draw(context, program_state);
+
         // Lights
         const light_movement = 3*Math.cos(Math.PI*t/2);
         const light_movement2 = 3*Math.sin(Math.PI*t/2);
         const light_height = 8 + Math.sin(Math.PI*t);
         const light_color = color(1, 0.8, 0.7, 1);
-        const light_intensity = 1000;
+        const light_intensity = 100000000;
         const light_position = vec4(light_movement, light_height, light_movement2, 1);
 
         program_state.lights = [new Light(light_position, light_color, light_intensity)];
+        // program_state.current_terrain = this.terrain;
 
         const light_orb_transform = origin.times(Mat4.translation(light_movement, light_height, light_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
         this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
 
-        // Room
-        let room_size = [10, 5, 10]; // W,H,D
-        let s_width = 0.5;
+        // // Room
+        // let room_size = [10, 5, 10]; // W,H,D
+        // let s_width = 0.5;
 
-        // Floor
-        let floor_transform = origin.times(Mat4.scale(room_size[0]+1, -s_width, room_size[2]+1));
-        this.shapes.box.draw(context, program_state, floor_transform, this.materials.room);
+        // // Floor
+        // let floor_transform = origin.times(Mat4.scale(room_size[0]+1, -s_width, room_size[2]+1));
+        // this.shapes.box.draw(context, program_state, floor_transform, this.materials.room);
 
-        // Right Wall
-        let r_wall_transform = origin.times(Mat4.translation(-room_size[0]-s_width, room_size[1]+s_width, 0, 1)).times(Mat4.scale(s_width, room_size[1], room_size[2]+1));
-        this.shapes.box.draw(context, program_state, r_wall_transform, this.materials.room);
+        // // Right Wall
+        // let r_wall_transform = origin.times(Mat4.translation(-room_size[0]-s_width, room_size[1]+s_width, 0, 1)).times(Mat4.scale(s_width, room_size[1], room_size[2]+1));
+        // this.shapes.box.draw(context, program_state, r_wall_transform, this.materials.room);
 
-        // Left Wall
-        let l_wall_transform = origin.times(Mat4.translation(room_size[0]+s_width, room_size[1]+s_width, 0, 1)).times(Mat4.scale(s_width, room_size[1], room_size[2]+1));
-        this.shapes.box.draw(context, program_state, l_wall_transform, this.materials.room);
+        // // Left Wall
+        // let l_wall_transform = origin.times(Mat4.translation(room_size[0]+s_width, room_size[1]+s_width, 0, 1)).times(Mat4.scale(s_width, room_size[1], room_size[2]+1));
+        // this.shapes.box.draw(context, program_state, l_wall_transform, this.materials.room);
         
-        // Back Wall
-        let b_wall_transform = origin.times(Mat4.translation(0, room_size[1]+s_width, -room_size[2]-s_width, 1)).times(Mat4.scale(room_size[0], room_size[1], s_width));
-        this.shapes.box.draw(context, program_state, b_wall_transform, this.goldy);
+        // // Back Wall
+        // let b_wall_transform = origin.times(Mat4.translation(0, room_size[1]+s_width, -room_size[2]-s_width, 1)).times(Mat4.scale(room_size[0], room_size[1], s_width));
+        // this.shapes.box.draw(context, program_state, b_wall_transform, this.goldy);
 
         // Sphere
         let sphere_transform1 = origin.times(Mat4.translation(-4, 4, -4, 1));
@@ -252,15 +254,7 @@ export class Final_Project extends Scene {
         // Stone
         let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 1, 3, 1));
         this.shapes.stone.draw(context, program_state, stone_transform, this.stone);
-
-        if (this.attached != undefined) {
-            let desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
-            if (this.attached() == this.initial_camera_location) {
-                desired = this.initial_camera_location;
-            }
-            let blending_factor = 0.1;
-            program_state.camera_inverse = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, blending_factor));
-        }
+        this.terrain.update(program_state)
     }
 }
 
@@ -711,3 +705,224 @@ const Bump_Map = defs.Bump_Map =
                   } `;
         }
     }
+
+    class TerrainShape extends Shape {
+        constructor(size, height_map, max_height = 50) {
+          super("position", "normal", "texture_coord");
+          this.SIZE = size;
+          this.MAX_HEIGHT = max_height;
+          this.MAX_PIXEL_COLOR = 256 * 256 * 256;
+      
+          let VERTEX_COUNT = height_map.height;
+      
+          this.heights = new Array(VERTEX_COUNT);
+          for (let i = 0; i < VERTEX_COUNT; i++) {
+            this.heights[i] = new Array(VERTEX_COUNT);
+          }
+      
+          let data = this.getImageData(height_map);
+          for (let i = 0; i < VERTEX_COUNT; i++) {
+            for (let j = 0; j < VERTEX_COUNT; j++) {
+              let height = this.get_height(height_map, data, j, i);
+      
+              this.heights[j][i] = height;
+              this.arrays.position.push(
+                vec(
+                  (-j / (VERTEX_COUNT - 1)) * this.SIZE,
+                  height,
+                  (-i / (VERTEX_COUNT - 1)) * this.SIZE
+                )
+              );
+              let normal = this.calculate_normal(j, i, height_map, data);
+      
+              this.arrays.normal.push(vec(normal[0], normal[1], normal[2]));
+              this.arrays.texture_coord.push(
+                vec(j / VERTEX_COUNT - 1, i / VERTEX_COUNT - 1)
+              );
+            }
+          }
+          for (let gz = 0; gz < VERTEX_COUNT - 1; gz++) {
+            for (let gx = 0; gx < VERTEX_COUNT - 1; gx++) {
+              let top_left = gz * VERTEX_COUNT + gx;
+              let top_right = top_left + 1;
+              let bottom_left = (gz + 1) * VERTEX_COUNT + gx;
+              let bottom_right = bottom_left + 1;
+              this.indices.push(top_left);
+              this.indices.push(bottom_left);
+              this.indices.push(top_right);
+              this.indices.push(top_right);
+              this.indices.push(bottom_left);
+              this.indices.push(bottom_right);
+            }
+          }
+        }
+      
+        get_height(height_map, data, x, z) {
+          if (x < 0 || x >= height_map.height || z < 0 || z >= height_map.height)
+            return 0;
+      
+          let pixel = this.getPixel(data, x, z);
+      
+          let height = pixel.r * pixel.g * pixel.b;
+          height -= this.MAX_PIXEL_COLOR / 2;
+          height /= this.MAX_PIXEL_COLOR / 2;
+          height *= this.MAX_HEIGHT;
+      
+          return height;
+        }
+      
+        calculate_normal(x, z, height_map, data) {
+          let height_left = this.get_height(height_map, data, x - 1, z);
+          let height_right = this.get_height(height_map, data, x + 1, z);
+          let height_down = this.get_height(height_map, data, x, z - 1);
+          let height_up = this.get_height(height_map, data, x, z + 1);
+      
+          let normal = vec(
+            height_left - height_right,
+            2 * this.SIZE,
+            height_down - height_up
+          );
+          normal.normalize();
+          return normal;
+        }
+      
+        getImageData(image) {
+          var canvas = document.createElement("canvas");
+          canvas.width = image.width;
+          canvas.height = image.height;
+      
+          var context = canvas.getContext("2d");
+          context.drawImage(image, 0, 0);
+      
+          return context.getImageData(0, 0, image.width, image.height);
+        }
+      
+        getPixel(imagedata, x, y) {
+          var position = (x + imagedata.width * y) * 4,
+            data = imagedata.data;
+          return {
+            r: data[position],
+            g: data[position + 1],
+            b: data[position + 2],
+            a: data[position + 3]
+          };
+        }
+      }
+
+class Terrain {
+        constructor(position, size) {
+          this.position = vec3(
+            position[0] * size,
+            position[1] * size,
+            position[2] * size
+          );
+          this.size = size;
+          this.height_map = new Image();
+          this.height_map.src = "assets/heightmap.png";
+          this.height_map.onload = () => {
+            this.shape = new TerrainShape(size, this.height_map);
+          };
+          this.material = new Material(new TerrainShader(10), {
+            texture: new Texture("assets/stars.png"),
+            ambient: 0.8,
+            diffusivity: 1.0,
+            specularity: 0
+          });
+        }
+      
+        update(program_state) {
+            this.material.ambient = Math.max(
+              0.1,
+              this.material.ambient - program_state.dt
+            );
+        }
+      
+        get_height(world_x, world_z) {
+          if (!this.shape) return 0;
+          let terrain_x = this.position[0] - world_x;
+          let terrain_z = this.position[2] - world_z;
+      
+          let grid_square_size = this.size / (this.shape.heights.length - 1);
+          let grid_x = Math.floor(terrain_x / grid_square_size);
+          let grid_z = Math.floor(terrain_z / grid_square_size);
+      
+          if (
+            grid_x >= this.shape.heights.length - 1 ||
+            grid_z >= this.shape.heights.length - 1 ||
+            grid_x < 0 ||
+            grid_z < 0
+          )
+            return 0;
+      
+          let x_coord = (terrain_x % grid_square_size) / grid_square_size;
+          let z_coord = (terrain_z % grid_square_size) / grid_square_size;
+      
+          var ans;
+          if (x_coord <= 1 - z_coord) {
+            ans = this.barry_centric(
+                new Vector3(0, this.shape.heights[grid_x][grid_z], 0),
+                new Vector3(1, this.shape.heights[grid_x + 1][grid_z], 0),
+                new Vector3(0, this.shape.heights[grid_x][grid_z + 1], 1),
+                new Vector3(x_coord, z_coord)
+            );
+          } else {
+            ans = this.barry_centric(
+                new Vector3(1, this.shape.heights[grid_x + 1][grid_z], 0),
+                new Vector3(1, this.shape.heights[grid_x + 1][grid_z + 1], 1),
+                new Vector3(0, this.shape.heights[grid_x][grid_z + 1], 1),
+                new Vector3(x_coord, z_coord)
+            );
+          }
+      
+          return ans;
+        }
+      
+        barry_centric(p1, p2, p3, pos) {
+          let det =
+            (p2[2] - p3[2]) * (p1[0] - p3[0]) + (p3[0] - p2[0]) * (p1[2] - p3[2]);
+          let l1 =
+            ((p2[2] - p3[2]) * (pos[0] - p3[0]) +
+              (p3[0] - p2[0]) * (pos[1] - p3[2])) /
+            det;
+          let l2 =
+            ((p3[2] - p1[2]) * (pos[0] - p3[0]) +
+              (p1[0] - p3[0]) * (pos[1] - p3[2])) /
+            det;
+          let l3 = 1 - l1 - l2;
+          return l1 * p1[1] + l2 * p2[1] + l3 * p3[1];
+        }
+      
+        draw(context, program_state) {
+        //   if (!this.shape) return;
+          let terrain_transform = Mat4.identity();
+          terrain_transform = terrain_transform.times(
+            Mat4.translation([this.position[0], this.position[1], this.position[2]])
+          );
+          this.shape.draw(context, program_state, terrain_transform, this.material);
+        }
+}
+
+class TerrainShader extends Textured_Phong {
+    vertex_glsl_code() {
+    // ********* VERTEX SHADER *********
+    return (
+        this.shared_glsl_code() +
+        `
+            varying vec2 f_tex_coord;
+            attribute vec3 position, normal;                            // Position is expressed in object coordinates.
+            attribute vec2 texture_coord;
+            uniform mat4 model_transform;
+            uniform mat4 projection_camera_model_transform;
+            void main()
+            {                                                                   // The vertex's final resting place (in NDCS):
+                gl_Position = projection_camera_model_transform * vec4( position, 1.0 );
+                                                                                // The final normal vector in screen space.
+                N = normalize( mat3( model_transform ) * normal / squared_scale);
+                vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;
+                                                // Turn the per-vertex texture coordinate into an interpolated variable.
+                f_tex_coord = texture_coord * 40.0;
+                gl_Position = model_transform * vec4(position, 1.0);
+            } `
+    );
+    }
+}
