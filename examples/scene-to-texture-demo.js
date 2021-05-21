@@ -14,20 +14,8 @@ export class Scene_To_Texture_Demo extends Scene {                   // **Scene_
                                                                      // previous rendering result.
     constructor() {               // Request the camera, shapes, and materials our Scene will need:
         super();
-        this.shapes = {
-            box: new defs.Cube(),
-            box_2: new defs.Cube(),
-            axis: new defs.Axis_Arrows()
-        }
         // Scale the texture coordinates:
         this.shapes.box_2.arrays.texture_coord.forEach(p => p.scale_by(2));
-
-        this.scratchpad = document.createElement('canvas');
-        // A hidden canvas for re-sizing the real canvas to be square:
-        this.scratchpad_context = this.scratchpad.getContext('2d');
-        this.scratchpad.width = 256;
-        this.scratchpad.height = 256;                // Initial image source: Blank gif file:
-        this.texture = new Texture("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
 
         const bump = new defs.Fake_Bump_Map(1);
         this.materials =
