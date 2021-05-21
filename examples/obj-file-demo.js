@@ -125,7 +125,7 @@ export class Obj_File_Demo extends Scene {                           // **Obj_Fi
         // Bump mapped:
         this.bumps = new Material(new defs.Fake_Bump_Map(1), {
             color: color(.5, .5, .5, 1),
-            ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/stars.png")
+            ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/weird.png")
         });
     }
 
