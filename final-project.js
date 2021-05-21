@@ -156,7 +156,8 @@ export class Final_Project extends Scene {
             ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/brick.png")
         });
         this.bumpy = new Material(new defs.Fake_Bump_Map(1), {
-            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/atlas.png")
+            color: color(.5, .5, .5, 1),
+            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/tlas.png")
         });
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 5, 20), vec3(0, 0, 0), vec3(0, 1, 0)).times(Mat4.translation(0, -5, -10, 1));
