@@ -124,7 +124,7 @@ export class Final_Project extends Scene {
             sphere4: new defs.Subdivision_Sphere(5),
             triangle: new defs.Triangle(),
             box: new defs.Cube(),
-            "robot": new Shape_From_File("assets/wooden watch tower2.obj"),
+            "robot": new Shape_From_File("assets/Atlas.obj"),
             "stone": new Shape_From_File("assets/Cobblestones3/Files/untitled.obj"),
         };
 
@@ -158,15 +158,15 @@ export class Final_Project extends Scene {
         });
         this.bumpy = new Material(new defs.Fake_Bump_Map(1), {
             color: color(.5, .5, .5, 1),
-            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/textures/Wood_Tower_Col.jpg")
+            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/textures/bumpy.png")
         });
         this.stone = new Material(new defs.Bump_Map(1), {
             color: color(.5, .5, .5, 1),
-            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S.jpg"), 
+            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 5, 20), vec3(0, 0, 0), vec3(0, 1, 0)).times(Mat4.translation(0, -5, -10, 1));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0)).times(Mat4.translation(0, -5, -10, 1));
 
         
     }
@@ -216,12 +216,12 @@ export class Final_Project extends Scene {
         this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
 
         // Room
-        let room_size = [10, 5, 10]; // W,H,D
+        let room_size = [40, 10, 40]; // W,H,D
         let s_width = 0.5;
 
         // Floor
         let floor_transform = origin.times(Mat4.scale(room_size[0]+1, -s_width, room_size[2]+1));
-        this.shapes.box.draw(context, program_state, floor_transform, this.materials.room);
+        this.shapes.box.draw(context, program_state, floor_transform, this.stone);
 
         // Right Wall
         let r_wall_transform = origin.times(Mat4.translation(-room_size[0]-s_width, room_size[1]+s_width, 0, 1)).times(Mat4.scale(s_width, room_size[1], room_size[2]+1));
@@ -236,10 +236,10 @@ export class Final_Project extends Scene {
         this.shapes.box.draw(context, program_state, b_wall_transform, this.goldy);
 
         // Sphere
-        let sphere_transform1 = origin.times(Mat4.translation(-4, 4, -4, 1));
+        let sphere_transform1 = origin.times(Mat4.translation(-5, 4, -4, 1));
         this.shapes.sphere4.draw(context, program_state, sphere_transform1, this.brick);
         
-        let sphere_transform2 = origin.times(Mat4.translation(0, 3, -6, 1));
+        let sphere_transform2 = origin.times(Mat4.translation(0, 9, -6, 1));
         this.shapes.sphere4.draw(context, program_state, sphere_transform2, this.materials.sphere2);
 
         let sphere_transform3 = origin.times(Mat4.translation(6, 7, -2, 1));
@@ -247,10 +247,10 @@ export class Final_Project extends Scene {
 
         // Robot
         let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 2.65, 0, 1));
-        this.shapes.robot.draw(context, program_state, robot_transform, this.stone);
+        this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
 
         // Stone
-        let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 1, 3, 1));
+        let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(3, 0.3, 3, 1));
         this.shapes.stone.draw(context, program_state, stone_transform, this.stone);
 
         if (this.attached != undefined) {
