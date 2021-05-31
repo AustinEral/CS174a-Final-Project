@@ -235,6 +235,10 @@ export class Final_Project extends Scene {
         let b_wall_transform = origin.times(Mat4.translation(0, room_size[1]+s_width, -room_size[2]-s_width, 1)).times(Mat4.scale(room_size[0], room_size[1], s_width));
         this.shapes.box.draw(context, program_state, b_wall_transform, this.goldy);
 
+        // Front Wall
+        let f_wall_transform = origin.times(Mat4.translation(0, room_size[1]+s_width, room_size[2]+s_width, 1)).times(Mat4.scale(room_size[0], room_size[1], s_width));
+        this.shapes.box.draw(context, program_state, f_wall_transform, this.materials.room);
+
         // Sphere
         let sphere_transform1 = origin.times(Mat4.translation(-5, 4, -4, 1));
         this.shapes.sphere4.draw(context, program_state, sphere_transform1, this.brick);
