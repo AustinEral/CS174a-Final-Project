@@ -264,6 +264,22 @@ export class Final_Project extends Scene {
         //Sky
         let sky_transform = origin.times(Mat4.scale(500, 500, 500));
         this.shapes.sphere4.draw(context, program_state, sky_transform, this.sky);
+        
+        // Stand
+        let stand_transform = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(10, 0.3, 10, 1)));
+        this.shapes.box.draw(context, program_state, stand_transform, this.stone);
+
+        // Stand
+        let stand_transform2 = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(-10, 0.3, 10, 1)));
+        this.shapes.box.draw(context, program_state, stand_transform2, this.stone);
+
+        // Stand
+        let stand_transform3 = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(-10, 0.3, -10, 1)));
+        this.shapes.box.draw(context, program_state, stand_transform3, this.stone);
+
+        // Stand
+        let stand_transform4 = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(10, 0.3, -10, 1)));
+        this.shapes.box.draw(context, program_state, stand_transform4, this.stone);
 
         if (this.attached != undefined) {
             let desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
