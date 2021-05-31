@@ -253,9 +253,7 @@ export class Final_Project extends Scene {
         let sphere_transform3 = origin.times(Mat4.translation(6, 7, -2, 1));
         this.shapes.sphere4.draw(context, program_state, sphere_transform3, this.materials.sphere3);
 
-        // Robot
-        let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(0, 2.65, 0, 1));
-        this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
+        
 
         // Stone
         let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(3, 0.3, 3, 1));
@@ -280,7 +278,9 @@ export class Final_Project extends Scene {
         // Stand
         let stand_transform4 = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(10, 0.3, -10, 1)));
         this.shapes.box.draw(context, program_state, stand_transform4, this.stone);
-
+        // Robot
+        let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
+        this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
         if (this.attached != undefined) {
             let desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
             if (this.attached() == this.initial_camera_location) {
