@@ -137,8 +137,9 @@ export class Final_Project extends Scene {
             ring: new Material(new Ring_Shader()),
             // TODO:  Fill in as many additional material objects as needed in this key/value table.
             //        (Requirement 4)
-            room: new Material(new defs.Phong_Shader(),
-                {ambient: 0.1, diffusivity: 0.8, specularity: 0.3, color: color(0.6,0.6,0.8,1)}),
+            room: new Material(new defs.Textured_Phong(),
+                {            color: color(.5, .5, .5, 1),
+                    ambient: 0.3, diffusivity: 1, specularity: 1, texture: new Texture("assets/ffff.png")}),
             sphere1: new Material(new defs.Phong_Shader(),
                 {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(1,0.7,0,1), smoothness: 40, time: 0}),
             sphere2: new Material(new defs.Phong_Shader(),
