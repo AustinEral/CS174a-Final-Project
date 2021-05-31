@@ -815,7 +815,7 @@ const Movement_Controls = defs.Movement_Controls =
         constructor() {
             super();
             const data_members = {
-                roll: 0, look_around_locked: true,
+                turn: 0, look_around_locked: true,
                 thrust: vec3(0, 0, 0), pos: vec3(0, 0, 0), z_axis: vec3(0, 0, 0),
                 radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
             };
@@ -881,9 +881,9 @@ const Movement_Controls = defs.Movement_Controls =
 
             this.key_triggered_button("Forward", ["w"], () => this.thrust[2] = 1, undefined, () => this.thrust[2] = 0);
             this.new_line();
-            this.key_triggered_button("Left", ["a"], () => this.thrust[0] = 1, undefined, () => this.thrust[0] = 0);
+            this.key_triggered_button("Left", ["q"], () => this.thrust[0] = 1, undefined, () => this.thrust[0] = 0);
             this.key_triggered_button("Back", ["s"], () => this.thrust[2] = -1, undefined, () => this.thrust[2] = 0);
-            this.key_triggered_button("Right", ["d"], () => this.thrust[0] = -1, undefined, () => this.thrust[0] = 0);
+            this.key_triggered_button("Right", ["e"], () => this.thrust[0] = -1, undefined, () => this.thrust[0] = 0);
             this.new_line();
 
             const speed_controls = this.control_panel.appendChild(document.createElement("span"));
@@ -891,13 +891,13 @@ const Movement_Controls = defs.Movement_Controls =
             this.key_triggered_button("-", ["o"], () =>
                 this.speed_multiplier /= 1.2, undefined, undefined, undefined, speed_controls);
             this.live_string(box => {
-                box.textContent = "Speed: " + this.speed_multiplier.toFixed(2)
+                box.textContent = "Speed: " + this.speed_multirightplier.toFixed(2)
             }, speed_controls);
             this.key_triggered_button("+", ["p"], () =>
                 this.speed_multiplier *= 1.2, undefined, undefined, undefined, speed_controls);
             this.new_line();
-            this.key_triggered_button("Roll left", [","], () => this.roll = 1, undefined, () => this.roll = 0);
-            this.key_triggered_button("Roll right", ["."], () => this.roll = -1, undefined, () => this.roll = 0);
+            this.key_triggered_button("Turn right", ["d"], () => this.turn = 1, undefined, () => this.turn = 0);
+            this.key_triggered_button("Turn left", ["a"], () => this.turn = -1, undefined, () => this.turn = 0);
             this.new_line();
             this.key_triggered_button("(Un)freeze mouse look around", ["f"], () => this.look_around_locked ^= 1, "#8B8885");
             this.new_line();
@@ -951,8 +951,8 @@ const Movement_Controls = defs.Movement_Controls =
                     this.matrix().post_multiply(Mat4.rotation(-velocity, i, 1 - i, 0));
                     this.inverse().pre_multiply(Mat4.rotation(+velocity, i, 1 - i, 0));
                 }
-            this.matrix().post_multiply(Mat4.rotation(-.1 * this.roll, 0, 0, 1));
-            this.inverse().pre_multiply(Mat4.rotation(+.1 * this.roll, 0, 0, 1));
+            this.matrix().post_multiply(Mat4.rotation(-.05 * this.turn, 0, 1, 0));
+            this.inverse().pre_multiply(Mat4.rotation(+.05 * this.turn, 0, 1, 0));
             // Now apply translation movement of the camera, in the newest local coordinate frame.
             this.matrix().post_multiply(Mat4.translation(...this.thrust.times(-meters_per_frame)));
             this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame)));

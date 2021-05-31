@@ -166,7 +166,7 @@ export class Final_Project extends Scene {
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0)).times(Mat4.translation(0, -5, -10, 1));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
 
         
     }
