@@ -167,7 +167,7 @@ export class Final_Project extends Scene {
         });
         this.sky = new Material(new Texture_Scroll_X(), {
           color: color(0, 0, 0, 1),
-          ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
+          ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/skybox.png"), 
         });
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
