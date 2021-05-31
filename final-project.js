@@ -763,7 +763,7 @@ const Bump_Map = defs.Bump_Map =
             void main(){
                 // Sample the texture image in the correct place:
                 // Modulo the texture coordinates so vec2 values don't grow forever
-                vec2 new_coord = vec2(f_tex_coord.x - (animation_time - (20.0 * floor(animation_time / 20.0))) * 0.05, f_tex_coord.y);
+                vec2 new_coord = vec2(f_tex_coord.x - (animation_time - (20.0 * floor(animation_time / 100.0))) * 0.01, f_tex_coord.y);
                 vec4 tex_color = texture2D( texture, new_coord);
                 if( tex_color.w < .01 ) discard;
                                                                          // Compute an initial (ambient) color:
