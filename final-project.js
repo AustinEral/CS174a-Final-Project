@@ -165,6 +165,10 @@ export class Final_Project extends Scene {
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
+        this.sky = new Material(new Texture_Rotate(), {
+          color: color(0, 0, 0, 1),
+          ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
+        });
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
 
@@ -256,6 +260,10 @@ export class Final_Project extends Scene {
         // Stone
         let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(3, 0.3, 3, 1));
         this.shapes.stone.draw(context, program_state, stone_transform, this.stone);
+
+        //Sky
+        let sky_transform = origin.times(Mat4.scale(100, 100, 100));
+        this.shapes.box.draw(context, program_state, sky_transform, this.sky);
 
         if (this.attached != undefined) {
             let desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
@@ -715,3 +723,28 @@ const Bump_Map = defs.Bump_Map =
                   } `;
         }
     }
+
+    class Texture_Rotate extends Textured_Phong {
+      // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #7.
+      fragment_glsl_code() {
+          return this.shared_glsl_code() + `
+              varying vec2 f_tex_coord;
+              uniform sampler2D texture;
+              uniform float animation_time;
+              void main(){
+                  // Sample the texture image in the correct place:
+                  float t = animation_time * 2.0 * 3.14159 / 4.0;
+                  // Modulo the angle so values don't grow forever
+                  t = t - (2.0 * 3.1415 * floor(t / (2.0 * 3.14159)));
+                  float x = f_tex_coord.x - 0.5;
+                  float y = f_tex_coord.y - 0.5;
+                  vec2 new_coord = vec2(sin(t) * x - cos(t) * y + 0.5, cos(t) * x + sin(t) * y + 0.5);
+                  vec4 tex_color = texture2D( texture, new_coord );
+                  if( tex_color.w < .01 ) discard;
+                                                                           // Compute an initial (ambient) color:
+                  gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                           // Compute the final color with contributions from lights:
+                  gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+          } `;
+      }
+  }

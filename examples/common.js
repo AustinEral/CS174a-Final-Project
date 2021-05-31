@@ -955,13 +955,13 @@ const Movement_Controls = defs.Movement_Controls =
             this.matrix().post_multiply(Mat4.rotation(-.05 * this.turn, 0, 1, 0));
             this.inverse().pre_multiply(Mat4.rotation(+.05 * this.turn, 0, 1, 0));
             // Now apply translation movement of the camera, in the newest local coordinate frame.
-            if(this.thrust[2] === -1  && this.pos[2] <= -35)
+            if(this.thrust[2] === -1  && this.pos[2] <= -40)
                 return;
-            if(this.thrust[0] === -1  && this.pos[0] <= -35)
+            if(this.thrust[0] === -1  && this.pos[0] <= -40)
                 return;
-            if(this.thrust[0] === 1  && this.pos[0] >= 35)
+            if(this.thrust[0] === 1  && this.pos[0] >= 40)
                 return;
-            if(this.thrust[2] === 1  && this.pos[2] >= 35)
+            if(this.thrust[2] === 1  && this.pos[2] >= 40)
                 return;
             this.matrix().post_multiply(Mat4.translation(...this.thrust.times(-meters_per_frame)));
             this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame)));
@@ -1002,8 +1002,8 @@ const Movement_Controls = defs.Movement_Controls =
             // Move in first-person.  Scale the normal camera aiming speed by dt for smoothness:
             this.first_person_flyaround(dt * r, dt * m);
             // Also apply third-person "arcball" camera mode if a mouse drag is occurring:
-            if (this.mouse.anchor)
-                this.third_person_arcball(dt * r);
+            // if (this.mouse.anchor)
+            // this.third_person_arcball(dt * r);
             // Log some values:
             this.pos = this.inverse().times(vec4(0, 0, 0, 1));
             this.z_axis = this.inverse().times(vec4(0, 0, 1, 0));
