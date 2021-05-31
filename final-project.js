@@ -162,7 +162,7 @@ export class Final_Project extends Scene {
         });
         this.stone = new Material(new defs.Bump_Map(1), {
             color: color(.5, .5, .5, 1),
-            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S.jpg"), 
+            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
 
