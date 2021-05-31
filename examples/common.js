@@ -955,13 +955,13 @@ const Movement_Controls = defs.Movement_Controls =
             this.matrix().post_multiply(Mat4.rotation(-.05 * this.turn, 0, 1, 0));
             this.inverse().pre_multiply(Mat4.rotation(+.05 * this.turn, 0, 1, 0));
             // Now apply translation movement of the camera, in the newest local coordinate frame.
-            if(this.thrust[2] === -1  && this.pos[2] <= -40)
+            if(this.thrust[2] === -1  && this.pos[2] <= -35)
                 return;
-            if(this.thrust[0] === -1  && this.pos[0] <= -40)
+            if(this.thrust[0] === -1  && this.pos[0] <= -35)
                 return;
-            if(this.thrust[0] === 1  && this.pos[0] >= 40)
+            if(this.thrust[0] === 1  && this.pos[0] >= 35)
                 return;
-            if(this.thrust[2] === 1  && this.pos[2] >= 40)
+            if(this.thrust[2] === 1  && this.pos[2] >= 35)
                 return;
             this.matrix().post_multiply(Mat4.translation(...this.thrust.times(-meters_per_frame)));
             this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame)));
