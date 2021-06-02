@@ -126,6 +126,7 @@ export class Final_Project extends Scene {
             box: new defs.Cube(),
             "robot": new Shape_From_File("assets/Atlas.obj"),
             "stone": new Shape_From_File("assets/Cobblestones3/Files/untitled.obj"),
+            "fountain": new Shape_From_File("assets/fountain2/fountain.obj")
         };
 
         // *** Materials
@@ -175,9 +176,13 @@ export class Final_Project extends Scene {
         for (let i = 0; i < this.num_water_frames; i++) {
             this.water_textures[i] = new Texture("assets/water/" + i + ".gif");
         }
-        this.water = new Material(new defs.Fake_Bump_Map(1), {
+        this.water = new Material(new defs.Fake_Bump_Map(2), {
+            color: color(0, 0, 0, 0.8),
+            ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
+        });
+        this.fountain = new Material(new defs.Bump_Map(2), {
             color: color(0, 0, 0, 1),
-            ambient: 1, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
+            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
         });
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
@@ -224,7 +229,11 @@ export class Final_Project extends Scene {
         const light_intensity = 1000;
         const light_position = vec4(light_movement, light_height, light_movement2, 1);
 
-        program_state.lights = [new Light(light_position, light_color, light_intensity)];
+        const fountain_light_position = vec4(30, 5, 30, 1);
+
+        program_state.lights = [new Light(light_position, light_color, light_intensity), new Light(fountain_light_position, light_color, 100)];
+        const light_orb_transform2 = origin.times(Mat4.translation(30, 4, 30, 1)).times(Mat4.translation(30, 4, 30, 1)).times(Mat4.scale(1, 1, 1));
+        this.shapes.sphere4.draw(context, program_state, light_orb_transform2, this.materials.light.override({color: light_color}));
 
         const light_orb_transform = origin.times(Mat4.translation(light_movement, light_height, light_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
         this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
@@ -275,7 +284,7 @@ export class Final_Project extends Scene {
         
         // Stand
         let stand_transform = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(10, 0.3, 10, 1)));
-        this.shapes.box.draw(context, program_state, stand_transform, this.stone);
+        // this.shapes.box.draw(context, program_state, stand_transform, this.stone);
 
         // Stand
         let stand_transform2 = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(-10, 0.3, 10, 1)));
@@ -290,13 +299,35 @@ export class Final_Project extends Scene {
         this.shapes.box.draw(context, program_state, stand_transform4, this.stone);
 
         // Water
-        let water_transform = origin.times(Mat4.translation(0, 7, 0, 1));
+        let water_transform1 = origin.times(Mat4.translation(30, 2.5, 30, 1)).times(Mat4.rotation(Math.PI/2, 0, 0, 1)).times(Mat4.scale(0.1, 6, 6));
+        let water_transform2 = origin.times(Mat4.translation(30, 6.3, 30, 1)).times(Mat4.rotation(Math.PI/2, 0, 0, 1)).times(Mat4.scale(0.1, 2, 2));
         let water_frame_rate = 0.05;
-        this.shapes.box.draw(context, program_state, water_transform, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
+        this.shapes.box.draw(context, program_state, water_transform1, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
+        this.shapes.sphere4.draw(context, program_state, water_transform2, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
+
+        // Fountain
+        let fountain_transform = origin.times(Mat4.translation(30, 5.5, 30, 1)).times(Mat4.rotation(-Math.PI/2, 1, 0, 0)).times(Mat4.scale(4, 4, 4));
+        this.shapes.fountain.draw(context, program_state, fountain_transform, this.brick);
+        let f1_transform = origin.times(Mat4.translation(23, 1.5, 23, 1)).times(Mat4.scale(1, 1.5, 1))
+        for (let i = 0; i < 8; i++) {
+            this.shapes.box.draw(context, program_state, f1_transform, this.brick);
+            f1_transform = f1_transform.times(Mat4.translation(0, 0, 14, 1));
+            this.shapes.box.draw(context, program_state, f1_transform, this.brick);
+            f1_transform = f1_transform.times(Mat4.translation(2, 0, -14, 1));
+        }
+        f1_transform = f1_transform.times(Mat4.translation(-2, 0, 2, 1));
+        for (let i = 0; i < 6; i++) {
+            this.shapes.box.draw(context, program_state, f1_transform, this.brick);
+            f1_transform = f1_transform.times(Mat4.translation(-14, 0, 0, 1));
+            this.shapes.box.draw(context, program_state, f1_transform, this.brick);
+            f1_transform = f1_transform.times(Mat4.translation(14, 0, 2, 1));
+        }
 
         // Robot
         let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
         this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
+
+
         if (this.attached != undefined) {
             let desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
             if (this.attached() == this.initial_camera_location) {
