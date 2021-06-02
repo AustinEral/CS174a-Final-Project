@@ -168,7 +168,16 @@ export class Final_Project extends Scene {
         });
         this.sky = new Material(new Texture_Scroll_X(), {
           color: color(0, 0, 0, 1),
-          ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/invert.png"), 
+          ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/invert.png"),
+        });
+        this.num_water_frames = 16;
+        this.water_textures = [this.num_water_frames];
+        for (let i = 0; i < this.num_water_frames; i++) {
+            this.water_textures[i] = new Texture("assets/water/" + i + ".gif");
+        }
+        this.water = new Material(new defs.Fake_Bump_Map(1), {
+            color: color(0, 0, 0, 1),
+            ambient: 1, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
         });
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
@@ -279,6 +288,12 @@ export class Final_Project extends Scene {
         // Stand
         let stand_transform4 = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(10, 0.3, -10, 1)));
         this.shapes.box.draw(context, program_state, stand_transform4, this.stone);
+
+        // Water
+        let water_transform = origin.times(Mat4.translation(0, 7, 0, 1));
+        let water_frame_rate = 0.05;
+        this.shapes.box.draw(context, program_state, water_transform, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
+
         // Robot
         let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
         this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
