@@ -357,8 +357,8 @@ export class Final_Project extends Scene {
         }
 
 
-        // Robot
-        let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1));
+        // Fox
+        let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1)).times(Mat4.rotation(Math.PI*3/4+0.5*Math.sin(2*Math.PI*t/6), 0, 1, 0));
         this.shapes.fox.draw(context, program_state, fox_transform, this.fire.override({texture: this.fire_textures[Math.floor(t/(water_frame_rate * 0.5) % this.num_water_frames)]}));
         
 
@@ -395,7 +395,7 @@ class Gouraud_Shader extends Shader {
         uniform vec3 squared_scale, camera_center;
 
         // Specifier "varying" means a variable's final value will be passed from the vertex shader
-        // on to the next phase (fragment shader), then interpolated per-fragment, weighted by the
+        // on to the next qphase (fragment shader), then interpolated per-fragment, weighted by the
         // pixel fragment's proximity to each of the 3 vertices (barycentric interpolation).
         varying vec3 N, vertex_worldspace;
         // ***** PHONG SHADING HAPPENS HERE: *****                                       
