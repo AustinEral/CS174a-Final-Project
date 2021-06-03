@@ -206,7 +206,7 @@ export class Final_Project extends Scene {
             }
         }
         this.ucla = new Material(new defs.Fake_Bump_Map(10), {
-            color: color(0, 0, 0, 0.8),
+            color: color(0, 0, 0, 1),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.ucla_textures[0], 
         });
         this.fountain = new Material(new defs.Fake_Bump_Map(10), {
@@ -358,7 +358,7 @@ export class Final_Project extends Scene {
 
 
         // Fox
-        let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1)).times(Mat4.rotation(Math.PI*3/4+0.5*Math.sin(2*Math.PI*t/6), 0, 1, 0));
+        let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1)).times(Mat4.rotation(Math.PI+0.5*Math.sin(2*Math.PI*t/6), 0, 1, 0));
         this.shapes.fox.draw(context, program_state, fox_transform, this.fire.override({texture: this.fire_textures[Math.floor(t/(water_frame_rate * 0.5) % this.num_water_frames)]}));
         
 
@@ -800,7 +800,7 @@ const Bump_Map_Texure_x4 = defs.Bump_Map_Texure_x4 =
             void main(){
                 // Sample the texture image in the correct place:
                 // Modulo the texture coordinates so vec2 values don't grow forever
-                vec2 new_coord = vec2(f_tex_coord.x - (animation_time - (100.0 * floor(animation_time / 100.0))) * 0.01, f_tex_coord.y);
+                vec2 new_coord = vec2(f_tex_coord.x - (animation_time - (200.0 * floor(animation_time / 200.0))) * 0.005, f_tex_coord.y);
                 vec4 tex_color = texture2D( texture, new_coord);
                 if( tex_color.w < .01 ) discard;
                                                                          // Compute an initial (ambient) color:
