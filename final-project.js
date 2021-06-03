@@ -139,8 +139,8 @@ export class Final_Project extends Scene {
             // TODO:  Fill in as many additional material objects as needed in this key/value table.
             //        (Requirement 4)
             room: new Material(new defs.Textured_Phong(),
-                {            color: color(.5, .5, .5, 1),
-                    ambient: 0.3, diffusivity: 1, specularity: 1, texture: new Texture("assets/ffff.png")}),
+                {            color: color(0, 0, 0, 1),
+                    ambient: 0.8, diffusivity: 1, specularity: 1, texture: new Texture("assets/ffff.png")}),
             sphere1: new Material(new defs.Phong_Shader(),
                 {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(1,0.7,0,1), smoothness: 40, time: 0}),
             sphere2: new Material(new defs.Phong_Shader(),
@@ -162,10 +162,14 @@ export class Final_Project extends Scene {
             color: color(.5, .5, .5, 1),
             ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/textures/bumpy.png")
         });
-        this.stone = new Material(new defs.Bump_Map(1), {
-            color: color(.5, .5, .5, 1),
-            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
+        this.stone = new Material(new defs.Fake_Bump_Map(1), {
+            color: color(0, 0, 0, 1),
+            ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
+        });
+        this.tile = new Material(new defs.Bump_Map_Texure_x4(2), {
+            color: color(0, 0, 0, 1),
+            ambient: 0.8, diffusivity: 1, specularity: 1, texture: new Texture("assets/tile.jpg")
         });
         this.sky = new Material(new Texture_Scroll_X(), {
           color: color(0, 0, 0, 1),
@@ -180,7 +184,7 @@ export class Final_Project extends Scene {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
         });
-        this.fountain = new Material(new defs.Bump_Map(2), {
+        this.fountain = new Material(new defs.Fake_Bump_Map(2), {
             color: color(0, 0, 0, 1),
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
         });
@@ -233,7 +237,6 @@ export class Final_Project extends Scene {
 
         program_state.lights = [new Light(light_position, light_color, light_intensity), new Light(fountain_light_position, light_color, 100)];
         const light_orb_transform2 = origin.times(Mat4.translation(30, 4, 30, 1)).times(Mat4.translation(30, 4, 30, 1)).times(Mat4.scale(1, 1, 1));
-        this.shapes.sphere4.draw(context, program_state, light_orb_transform2, this.materials.light.override({color: light_color}));
 
         const light_orb_transform = origin.times(Mat4.translation(light_movement, light_height, light_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
         this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
@@ -244,7 +247,7 @@ export class Final_Project extends Scene {
 
         // Floor
         let floor_transform = origin.times(Mat4.scale(room_size[0]+1, -s_width, room_size[2]+1));
-        this.shapes.box.draw(context, program_state, floor_transform, this.stone);
+        this.shapes.box.draw(context, program_state, floor_transform, this.tile);
 
         // Right Wall
         let r_wall_transform = origin.times(Mat4.translation(-room_size[0]-s_width, room_size[1]+s_width, 0, 1)).times(Mat4.scale(s_width, room_size[1], room_size[2]+1));
@@ -765,7 +768,7 @@ const Phong_Shader = defs.Phong_Shader =
     }
 
 
-const Bump_Map = defs.Bump_Map =
+const Bump_Map_Texure_x4 = defs.Bump_Map_Texure_x4 =
     class Bump_Map extends Textured_Phong {
         // **Fake_Bump_Map** Same as Phong_Shader, except adds a line of code to
         // compute a new normal vector, perturbed according to texture color.
@@ -778,7 +781,8 @@ const Bump_Map = defs.Bump_Map =
         
                 void main(){
                     // Sample the texture image in the correct place:
-                    vec4 tex_color = texture2D( texture, f_tex_coord );
+                    vec2 new_coord = vec2(f_tex_coord.x*4.0, f_tex_coord.y*4.0);
+                    vec4 tex_color = texture2D( texture, new_coord );
                     if( tex_color.w < .01 ) discard;
                     // Slightly disturb normals based on sampling the same image that was used for texturing:
                     vec3 bumped_N  = N + tex_color.rgb - .5*vec3(1,1,1);
