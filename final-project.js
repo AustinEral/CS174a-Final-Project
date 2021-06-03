@@ -115,12 +115,7 @@ export class Final_Project extends Scene {
             torus: new defs.Torus(15, 15),
             torus2: new defs.Torus(3, 15),
             sphere: new defs.Subdivision_Sphere(4),
-            circle: new defs.Regular_2D_Polygon(1, 15),
-            // TODO:  Fill in as many additional shape instances as needed in this key/value table.
-            //        (Requirement 1)
-            sphere1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
-            sphere2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
-            sphere3: new defs.Subdivision_Sphere(3),
+            circle: new defs.Regular_2D_Polygon(1, 40),
             sphere4: new defs.Subdivision_Sphere(5),
             triangle: new defs.Triangle(),
             box: new defs.Cube(),
@@ -135,9 +130,6 @@ export class Final_Project extends Scene {
                 {ambient: .4, diffusivity: .6, color: hex_color("#ffffff")}),
             test2: new Material(new Gouraud_Shader(),
                 {ambient: .4, diffusivity: .6, color: hex_color("#992828")}),
-            ring: new Material(new Ring_Shader()),
-            // TODO:  Fill in as many additional material objects as needed in this key/value table.
-            //        (Requirement 4)
             room: new Material(new defs.Textured_Phong(),
                 {            color: color(0, 0, 0, 1),
                     ambient: 0.8, diffusivity: 1, specularity: 1, texture: new Texture("assets/ffff.png")}),
@@ -184,6 +176,23 @@ export class Final_Project extends Scene {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
         });
+
+        this.num_ucla_frames = 110;
+        this.ucla_textures = [this.num_ucla_frames];
+        for (let i = 0; i < this.num_ucla_frames; i++) {
+            try {
+                const actual = i + 1;
+                const str = "assets/ucla/" + actual + "-crop.jpg"
+                this.ucla_textures[i] = new Texture(str);
+            }
+            catch (error) {
+                console.log('uh oh')
+            }
+        }
+        this.ucla = new Material(new defs.Fake_Bump_Map(2), {
+            color: color(0, 0, 0, 0.8),
+            ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.ucla_textures[0], 
+        });
         this.fountain = new Material(new defs.Fake_Bump_Map(2), {
             color: color(0, 0, 0, 1),
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
@@ -191,20 +200,9 @@ export class Final_Project extends Scene {
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 0), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(20, -8, 0, 1));
 
-        
     }
 
     make_control_panel() {
-        // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
-        this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
-        this.new_line();
-        this.key_triggered_button("Attach to planet 1", ["Control", "1"], () => this.attached = () => this.planet_1);
-        this.key_triggered_button("Attach to planet 2", ["Control", "2"], () => this.attached = () => this.planet_2);
-        this.new_line();
-        this.key_triggered_button("Attach to planet 3", ["Control", "3"], () => this.attached = () => this.planet_3);
-        this.key_triggered_button("Attach to planet 4", ["Control", "4"], () => this.attached = () => this.planet_4);
-        this.new_line();
-        this.key_triggered_button("Attach to moon", ["Control", "m"], () => this.attached = () => this.moon);
     }
 
     display(context, program_state) {
@@ -303,10 +301,10 @@ export class Final_Project extends Scene {
 
         // Water
         let water_transform1 = origin.times(Mat4.translation(30, 2.5, 30, 1)).times(Mat4.rotation(Math.PI/2, 0, 0, 1)).times(Mat4.scale(0.1, 6, 6));
-        let water_transform2 = origin.times(Mat4.translation(30, 6.3, 30, 1)).times(Mat4.rotation(Math.PI/2, 0, 0, 1)).times(Mat4.scale(0.1, 2, 2));
+        let water_transform2 = origin.times(Mat4.translation(30, 6.5, 30, 1)).times(Mat4.rotation(Math.PI/2, 1, 0, 0)).times(Mat4.scale(2, 2, 2));
         let water_frame_rate = 0.05;
         this.shapes.box.draw(context, program_state, water_transform1, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
-        this.shapes.sphere4.draw(context, program_state, water_transform2, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
+        this.shapes.circle.draw(context, program_state, water_transform2, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
 
         // Fountain
         let fountain_transform = origin.times(Mat4.translation(30, 5.5, 30, 1)).times(Mat4.rotation(-Math.PI/2, 1, 0, 0)).times(Mat4.scale(4, 4, 4));
@@ -326,6 +324,17 @@ export class Final_Project extends Scene {
             f1_transform = f1_transform.times(Mat4.translation(14, 0, 2, 1));
         }
 
+        // Ucla
+        let ucla_transform = origin.times(
+            Mat4.translation(-30, room_size[1]/2-1.2, +10.45-room_size[2]-s_width, 1)).times(Mat4.rotation(0, -Math.PI / 2, 0, 1)).times(Mat4.scale(0.1, 3, 3));
+        let ucla_frame_rate = 0.90;
+        const iter = Math.floor(t/ucla_frame_rate % this.num_ucla_frames)
+        this.shapes.box.draw(
+            context, 
+            program_state, 
+            ucla_transform, 
+            this.ucla.override({texture: this.ucla_textures[iter]}));
+
         // Robot
         let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
         this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
@@ -339,6 +348,7 @@ export class Final_Project extends Scene {
             let blending_factor = 0.1;
             program_state.camera_inverse = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, blending_factor));
         }
+
     }
 }
 
@@ -490,68 +500,6 @@ class Gouraud_Shader extends Shader {
 
         this.send_material(context, gpu_addresses, material);
         this.send_gpu_state(context, gpu_addresses, gpu_state, model_transform);
-    }
-}
-
-class Ring_Shader extends Shader {
-    send_material(gl, gpu, material) {
-        // send_material(): Send the desired shape-wide material qualities to the
-        // graphics card, where they will tweak the Phong lighting formula.
-        gl.uniform4fv(gpu.shape_color, material.color);
-        gl.uniform1f(gpu.ambient, material.ambient);
-        gl.uniform1f(gpu.diffusivity, material.diffusivity);
-        gl.uniform1f(gpu.specularity, material.specularity);
-        gl.uniform1f(gpu.smoothness, material.smoothness);
-        gl.uniform1f(gpu.time, material.time);
-    }
-
-    update_GPU(context, gpu_addresses, graphics_state, model_transform, material) {
-        // update_GPU():  Defining how to synchronize our JavaScript's variables to the GPU's:
-        const [P, C, M] = [graphics_state.projection_transform, graphics_state.camera_inverse, model_transform],
-            PCM = P.times(C).times(M);
-        context.uniformMatrix4fv(gpu_addresses.model_transform, false, Matrix.flatten_2D_to_1D(model_transform.transposed()));
-        context.uniformMatrix4fv(gpu_addresses.projection_camera_model_transform, false,
-            Matrix.flatten_2D_to_1D(PCM.transposed()));
-
-        this.send_material(context, gpu_addresses, material);
-    }
-
-    shared_glsl_code() {
-        // ********* SHARED CODE, INCLUDED IN BOTH SHADERS *********
-        return `
-        precision mediump float;
-        varying vec4 point_position;
-        varying vec4 center;
-        uniform vec4 shape_color;
-        uniform float ambient, diffusivity, specularity, smoothness;
-        uniform float time;
-        `;
-    }
-
-    vertex_glsl_code() {
-        // ********* VERTEX SHADER *********
-        // TODO:  Complete the main function of the vertex shader (Extra Credit Part II).
-        return this.shared_glsl_code() + `
-        attribute vec3 position;
-        uniform mat4 model_transform;
-        uniform mat4 projection_camera_model_transform;
-        
-        void main(){
-            gl_Position = projection_camera_model_transform * vec4( position, 1.0 );
-            center = model_transform * vec4(0., 0., 0., 1.0);
-            point_position = model_transform * vec4(position, smoothness);
-        }`;
-    }
-
-    fragment_glsl_code() {
-        // ********* FRAGMENT SHADER *********
-        // TODO:  Complete the main function of the fragment shader (Extra Credit Part II).
-        return this.shared_glsl_code() + `
-        void main(){
-            float d = length(point_position.xyz - center.xyz);
-            float v = (sin(d*20.) + 1.)/2.;
-            gl_FragColor = shape_color*time;
-        }`;
     }
 }
 

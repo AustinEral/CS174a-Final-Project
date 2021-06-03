@@ -815,7 +815,7 @@ const Movement_Controls = defs.Movement_Controls =
         constructor() {
             super();
             const data_members = {
-                turn: 0, look_around_locked: true,
+                turn: 0, pitch: 0, look_around_locked: true,
                 thrust: vec3(0, 0, 0), pos: vec3(0, 0, 0), z_axis: vec3(0, 0, 0),
                 radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
             };
@@ -888,48 +888,53 @@ const Movement_Controls = defs.Movement_Controls =
 
             const speed_controls = this.control_panel.appendChild(document.createElement("span"));
             speed_controls.style.margin = "30px";
-            this.key_triggered_button("-", ["o"], () =>
-                this.speed_multiplier /= 1.2, undefined, undefined, undefined, speed_controls);
-            this.live_string(box => {
-                box.textContent = "Speed: " + this.speed_multirightplier.toFixed(2)
-            }, speed_controls);
-            this.key_triggered_button("+", ["p"], () =>
-                this.speed_multiplier *= 1.2, undefined, undefined, undefined, speed_controls);
-            this.new_line();
+            // this.key_triggered_button("-", ["o"], () =>
+            //     this.speed_multiplier /= 1.2, undefined, undefined, undefined, speed_controls);
+            // this.live_string(box => {
+            //     box.textContent = "Speed: " + this.speed_multirightplier.toFixed(2)
+            // }, speed_controls);
+            // this.key_triggered_button("+", ["p"], () =>
+            //     this.speed_multiplier *= 1.2, undefined, undefined, undefined, speed_controls);
+            // this.new_line();
             this.key_triggered_button("Turn right", ["d"], () => this.turn = 1, undefined, () => this.turn = 0);
             this.key_triggered_button("Turn left", ["a"], () => this.turn = -1, undefined, () => this.turn = 0);
             this.new_line();
-            this.key_triggered_button("(Un)freeze mouse look around", ["f"], () => this.look_around_locked ^= 1, "#8B8885");
-            this.new_line();
-            this.key_triggered_button("Go to world origin", ["r"], () => {
-                this.matrix().set_identity(4, 4);
-                this.inverse().set_identity(4, 4)
-            }, "#8B8885");
-            this.new_line();
+            
+            // this.key_triggered_button("Pitch Up", [" "], () => this.pitch = -1, undefined, () => this.pitch = 0);
+            // this.key_triggered_button("Pitch Down", ["z"], () => this.pitch = 1, undefined, () => this.pitch = 0);
+            
+            // this.new_line()
+            // this.key_triggered_button("(Un)freeze mouse look around", ["f"], () => this.look_around_locked ^= 1, "#8B8885");
+            // this.new_line();
+            // this.key_triggered_button("Go to world origin", ["r"], () => {
+            //     this.matrix().set_identity(4, 4);
+            //     this.inverse().set_identity(4, 4)
+            // }, "#8B8885");
+            // this.new_line();
 
-            this.key_triggered_button("Look at origin from front", ["1"], () => {
-                this.inverse().set(Mat4.look_at(vec3(0, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0)));
-                this.matrix().set(Mat4.inverse(this.inverse()));
-            }, "#8B8885");
-            this.new_line();
-            this.key_triggered_button("from right", ["2"], () => {
-                this.inverse().set(Mat4.look_at(vec3(10, 0, 0), vec3(0, 0, 0), vec3(0, 1, 0)));
-                this.matrix().set(Mat4.inverse(this.inverse()));
-            }, "#8B8885");
-            this.key_triggered_button("from rear", ["3"], () => {
-                this.inverse().set(Mat4.look_at(vec3(0, 0, -10), vec3(0, 0, 0), vec3(0, 1, 0)));
-                this.matrix().set(Mat4.inverse(this.inverse()));
-            }, "#8B8885");
-            this.key_triggered_button("from left", ["4"], () => {
-                this.inverse().set(Mat4.look_at(vec3(-10, 0, 0), vec3(0, 0, 0), vec3(0, 1, 0)));
-                this.matrix().set(Mat4.inverse(this.inverse()));
-            }, "#8B8885");
-            this.new_line();
-            this.key_triggered_button("Attach to global camera", ["Shift", "R"],
-                () => {
-                    this.will_take_over_graphics_state = true
-                }, "#8B8885");
-            this.new_line();
+            // this.key_triggered_button("Look at origin from front", ["1"], () => {
+            //     this.inverse().set(Mat4.look_at(vec3(0, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0)));
+            //     this.matrix().set(Mat4.inverse(this.inverse()));
+            // }, "#8B8885");
+            // this.new_line();
+            // this.key_triggered_button("from right", ["2"], () => {
+            //     this.inverse().set(Mat4.look_at(vec3(10, 0, 0), vec3(0, 0, 0), vec3(0, 1, 0)));
+            //     this.matrix().set(Mat4.inverse(this.inverse()));
+            // }, "#8B8885");
+            // this.key_triggered_button("from rear", ["3"], () => {
+            //     this.inverse().set(Mat4.look_at(vec3(0, 0, -10), vec3(0, 0, 0), vec3(0, 1, 0)));
+            //     this.matrix().set(Mat4.inverse(this.inverse()));
+            // }, "#8B8885");
+            // this.key_triggered_button("from left", ["4"], () => {
+            //     this.inverse().set(Mat4.look_at(vec3(-10, 0, 0), vec3(0, 0, 0), vec3(0, 1, 0)));
+            //     this.matrix().set(Mat4.inverse(this.inverse()));
+            // }, "#8B8885");
+            // this.new_line();
+            // this.key_triggered_button("Attach to global camera", ["Shift", "R"],
+            //     () => {
+            //         this.will_take_over_graphics_state = true
+            //     }, "#8B8885");
+            // this.new_line();
         }
 
         first_person_flyaround(radians_per_frame, meters_per_frame, leeway = 70) {
@@ -954,6 +959,8 @@ const Movement_Controls = defs.Movement_Controls =
                 
             this.matrix().post_multiply(Mat4.rotation(-.05 * this.turn, 0, 1, 0));
             this.inverse().pre_multiply(Mat4.rotation(+.05 * this.turn, 0, 1, 0));
+            this.matrix().post_multiply(Mat4.rotation(-.05 * this.pitch, 1, 0, 0));
+            this.inverse().pre_multiply(Mat4.rotation(+.05 * this.pitch, 1, 0, 0));
             // Now apply translation movement of the camera, in the newest local coordinate frame.
             if(this.thrust[2] === -1  && this.pos[2] <= -40)
                 return;
@@ -963,9 +970,11 @@ const Movement_Controls = defs.Movement_Controls =
                 return;
             if(this.thrust[2] === 1  && this.pos[2] >= 40)
                 return;
-                console.log(this.z_axis);
+                this.z_axis = vec4([0, 0, 1, 1]);
             this.matrix().post_multiply(Mat4.translation(...this.thrust.times(-meters_per_frame)));
-            this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame).times(this.z_axis[0], this.z_axis[0], this.z_axis[0])));
+            this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame)));
+            console.log(this.z_axis);
+            console.log(this.pos);
         }
 
         third_person_arcball(radians_per_frame) {
