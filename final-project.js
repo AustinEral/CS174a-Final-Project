@@ -183,8 +183,6 @@ export class Final_Project extends Scene {
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
         });
 
-<<<<<<< HEAD
-=======
         this.num_fire_frames = 16;
         this.fire_textures = [this.num_fire_frames];
         for (let i = 0; i < this.num_water_frames; i++) {
@@ -195,7 +193,6 @@ export class Final_Project extends Scene {
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.fire_textures[0], 
         });
 
->>>>>>> main
         this.num_ucla_frames = 110;
         this.ucla_textures = [this.num_ucla_frames];
         for (let i = 0; i < this.num_ucla_frames; i++) {
@@ -208,19 +205,6 @@ export class Final_Project extends Scene {
                 console.log('uh oh')
             }
         }
-<<<<<<< HEAD
-        this.ucla = new Material(new defs.Fake_Bump_Map(2), {
-            color: color(0, 0, 0, 0.8),
-            ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.ucla_textures[0], 
-        });
-        this.fountain = new Material(new defs.Fake_Bump_Map(2), {
-            color: color(0, 0, 0, 1),
-            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
-        });
-
-        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 0), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(20, -8, 0, 1));
-
-=======
         this.ucla = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.ucla_textures[0], 
@@ -230,7 +214,6 @@ export class Final_Project extends Scene {
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
         });
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
->>>>>>> main
     }
 
     make_control_panel() {
@@ -373,23 +356,6 @@ export class Final_Project extends Scene {
             f1_transform = f1_transform.times(Mat4.translation(14, 0, 2, 1));
         }
 
-<<<<<<< HEAD
-        // Ucla
-        let ucla_transform = origin.times(
-            Mat4.translation(-30, room_size[1]/2-1.2, +10.45-room_size[2]-s_width, 1)).times(Mat4.rotation(0, -Math.PI / 2, 0, 1)).times(Mat4.scale(0.1, 3, 3));
-        let ucla_frame_rate = 0.90;
-        const iter = Math.floor(t/ucla_frame_rate % this.num_ucla_frames)
-        this.shapes.box.draw(
-            context, 
-            program_state, 
-            ucla_transform, 
-            this.ucla.override({texture: this.ucla_textures[iter]}));
-
-        // Robot
-        let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
-        this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
-=======
->>>>>>> main
 
         // Robot
         let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1));
