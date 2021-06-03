@@ -168,6 +168,11 @@ export class Final_Project extends Scene {
             ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
+        this.cobble = new Material(new defs.Fake_Bump_Map(1), {
+            color: color(0, 0, 0, 1),
+            ambient: 0.7, diffusivity: 0.1, specularity: 0.2, texture: new Texture("assets/Cobblestones3/textures/BrickRound0105_5_S.jpg"), 
+            bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
+        });
         this.tile = new Material(new defs.Bump_Map_Texure_x4(2), {
             color: color(0, 0, 0, 1),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: new Texture("assets/tile.jpg")
@@ -220,16 +225,6 @@ export class Final_Project extends Scene {
     }
 
     make_control_panel() {
-        // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
-        this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
-        this.new_line();
-        this.key_triggered_button("Attach to planet 1", ["Control", "1"], () => this.attached = () => this.planet_1);
-        this.key_triggered_button("Attach to planet 2", ["Control", "2"], () => this.attached = () => this.planet_2);
-        this.new_line();
-        this.key_triggered_button("Attach to planet 3", ["Control", "3"], () => this.attached = () => this.planet_3);
-        this.key_triggered_button("Attach to planet 4", ["Control", "4"], () => this.attached = () => this.planet_4);
-        this.new_line();
-        this.key_triggered_button("Attach to moon", ["Control", "m"], () => this.attached = () => this.moon);
     }
 
     display(context, program_state) {
@@ -259,13 +254,17 @@ export class Final_Project extends Scene {
         const light_position = vec4(light_movement, light_height, light_movement2, 1);
 
         const fountain_light_position = vec4(30, 5, 30, 1);
+        const cobble_light = vec4(10, 0, +5, 1);
 
-        program_state.lights = [new Light(light_position, light_color, light_intensity), new Light(fountain_light_position, light_color, 100)];
+        program_state.lights = [new Light(light_position, light_color, light_intensity), 
+                                new Light(fountain_light_position, light_color, 100), 
+                                new Light(cobble_light, light_color, 100)];
         const light_orb_transform2 = origin.times(Mat4.translation(30, 4, 30, 1)).times(Mat4.translation(30, 4, 30, 1)).times(Mat4.scale(1, 1, 1));
 
         const light_orb_transform = origin.times(Mat4.translation(light_movement, light_height, light_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
         this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
-
+        Mat4.translation(14, 4, -13.8, 1)
+        
         // Room
         let room_size = [40, 10, 40]; // W,H,D
         let s_width = 0.5;
@@ -300,8 +299,6 @@ export class Final_Project extends Scene {
         let sphere_transform3 = origin.times(Mat4.translation(6, 7, -2, 1));
         this.shapes.sphere4.draw(context, program_state, sphere_transform3, this.materials.sphere3);
 
-        
-
         // Stone
         let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(3, 0.3, 3, 1));
         this.shapes.stone.draw(context, program_state, stone_transform, this.stone);
@@ -310,6 +307,10 @@ export class Final_Project extends Scene {
         let sky_transform = origin.times(Mat4.scale(500, 500, 500));
         this.shapes.sphere4.draw(context, program_state, sky_transform, this.sky);
         
+        // Stone
+        let showTransform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 2.40, -15, 1));
+        this.shapes.box.draw(context, program_state, showTransform, this.cobble);
+  
         // Stand
         let stand_transform = origin.times(Mat4.scale(3, 2, 3).times(Mat4.translation(10, 0.3, 10, 1)));
         // this.shapes.box.draw(context, program_state, stand_transform, this.stone);
@@ -361,9 +362,6 @@ export class Final_Project extends Scene {
             f1_transform = f1_transform.times(Mat4.translation(14, 0, 2, 1));
         }
 
-        // Robot
-        let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
-        this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
 
         // Robot
         let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1));
