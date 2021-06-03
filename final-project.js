@@ -184,14 +184,28 @@ export class Final_Project extends Scene {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
         });
+
+        this.num_ucla_frames = 110;
+        this.ucla_textures = [this.num_ucla_frames];
+        for (let i = 0; i < this.num_ucla_frames; i++) {
+            try {
+                const actual = i + 1;
+                const str = "assets/ucla/" + actual + "-crop.jpg"
+                this.ucla_textures[i] = new Texture(str);
+            }
+            catch (error) {
+                console.log('uh oh')
+            }
+        }
+        this.ucla = new Material(new defs.Fake_Bump_Map(2), {
+            color: color(0, 0, 0, 0.8),
+            ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.ucla_textures[0], 
+        });
         this.fountain = new Material(new defs.Fake_Bump_Map(2), {
             color: color(0, 0, 0, 1),
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
         });
-
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
-
-        
     }
 
     make_control_panel() {
@@ -308,6 +322,16 @@ export class Final_Project extends Scene {
         this.shapes.box.draw(context, program_state, water_transform1, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
         this.shapes.sphere4.draw(context, program_state, water_transform2, this.water.override({texture: this.water_textures[Math.floor(t/water_frame_rate % this.num_water_frames)]}));
 
+        // Ucla
+        let ucla_transform = origin.times(
+            Mat4.translation(-30, room_size[1]/2-1.2, +10.45-room_size[2]-s_width, 1)).times(Mat4.rotation(0, -Math.PI / 2, 0, 1)).times(Mat4.scale(0.1, 3, 3));
+        let ucla_frame_rate = 0.90;
+        const iter = Math.floor(t/ucla_frame_rate % this.num_ucla_frames)
+        this.shapes.box.draw(
+            context, 
+            program_state, 
+            ucla_transform, 
+            this.ucla.override({texture: this.ucla_textures[iter]}));
         // Fountain
         let fountain_transform = origin.times(Mat4.translation(30, 5.5, 30, 1)).times(Mat4.rotation(-Math.PI/2, 1, 0, 0)).times(Mat4.scale(4, 4, 4));
         this.shapes.fountain.draw(context, program_state, fountain_transform, this.brick);
