@@ -963,8 +963,9 @@ const Movement_Controls = defs.Movement_Controls =
                 return;
             if(this.thrust[2] === 1  && this.pos[2] >= 40)
                 return;
+                console.log(this.z_axis);
             this.matrix().post_multiply(Mat4.translation(...this.thrust.times(-meters_per_frame)));
-            this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame)));
+            this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame).times(this.z_axis[0], this.z_axis[0], this.z_axis[0])));
         }
 
         third_person_arcball(radians_per_frame) {
@@ -973,16 +974,16 @@ const Movement_Controls = defs.Movement_Controls =
             const dragging_vector = this.mouse.from_center.minus(this.mouse.anchor);
             if (dragging_vector.norm() <= 0)
                 return;
-            this.matrix().post_multiply(Mat4.translation(0, 0, -25));
-            this.inverse().pre_multiply(Mat4.translation(0, 0, +25));
+            this.matrix().post_multiply(Mat4.translation(0, 0, -5));
+            this.inverse().pre_multiply(Mat4.translation(0, 0, +5));
 
             const rotation = Mat4.rotation(radians_per_frame * dragging_vector.norm(),
                 dragging_vector[1], dragging_vector[0], 0);
             this.matrix().post_multiply(rotation);
             this.inverse().pre_multiply(rotation);
 
-            this.matrix().post_multiply(Mat4.translation(0, 0, +25));
-            this.inverse().pre_multiply(Mat4.translation(0, 0, -25));
+            this.matrix().post_multiply(Mat4.translation(0, 0, +5));
+            this.inverse().pre_multiply(Mat4.translation(0, 0, -5));
         }
 
         display(context, graphics_state, dt = graphics_state.animation_delta_time / 1000) {

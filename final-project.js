@@ -189,7 +189,7 @@ export class Final_Project extends Scene {
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
         });
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 0), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(20, -8, 0, 1));
 
         
     }
