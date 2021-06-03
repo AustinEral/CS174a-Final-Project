@@ -151,29 +151,29 @@ export class Final_Project extends Scene {
             light: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 0, specularity: 0, color: color(1,1,1,1)}),
         }
-        this.goldy = new Material(new defs.Fake_Bump_Map(1), {
+        this.goldy = new Material(new defs.Fake_Bump_Map(10), {
             color: color(.5, .5, .5, 1),
             ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/goldy.png")
         });
-        this.brick = new Material(new defs.Fake_Bump_Map(1), {
+        this.brick = new Material(new defs.Fake_Bump_Map(10), {
             color: color(.5, .5, .5, 1),
             ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/brick.png")
         });
-        this.bumpy = new Material(new defs.Fake_Bump_Map(1), {
+        this.bumpy = new Material(new defs.Fake_Bump_Map(10), {
             color: color(.5, .5, .5, 1),
             ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/textures/bumpy.png")
         });
-        this.stone = new Material(new defs.Fake_Bump_Map(1), {
+        this.stone = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 1),
             ambient: 1, diffusivity: 1, specularity: 1, texture: new Texture("assets/woodfloor.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
-        this.cobble = new Material(new defs.Fake_Bump_Map(1), {
+        this.cobble = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 1),
             ambient: 0.7, diffusivity: 0.1, specularity: 0.2, texture: new Texture("assets/Cobblestones3/textures/BrickRound0105_5_S.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
-        this.tile = new Material(new defs.Bump_Map_Texure_x4(2), {
+        this.tile = new Material(new defs.Bump_Map_Texure_x4(10), {
             color: color(0, 0, 0, 1),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: new Texture("assets/tile.jpg")
         });
@@ -186,7 +186,7 @@ export class Final_Project extends Scene {
         for (let i = 0; i < this.num_water_frames; i++) {
             this.water_textures[i] = new Texture("assets/water/" + i + ".gif");
         }
-        this.water = new Material(new defs.Fake_Bump_Map(2), {
+        this.water = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
         });
@@ -196,7 +196,7 @@ export class Final_Project extends Scene {
         for (let i = 0; i < this.num_water_frames; i++) {
             this.fire_textures[i] = new Texture("assets/fire/" + i + ".gif");
         }
-        this.fire = new Material(new defs.Fake_Bump_Map(2), {
+        this.fire = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.fire_textures[0], 
         });
@@ -213,11 +213,11 @@ export class Final_Project extends Scene {
                 console.log('uh oh')
             }
         }
-        this.ucla = new Material(new defs.Fake_Bump_Map(2), {
+        this.ucla = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.ucla_textures[0], 
         });
-        this.fountain = new Material(new defs.Fake_Bump_Map(2), {
+        this.fountain = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 1),
             ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
         });
@@ -254,12 +254,14 @@ export class Final_Project extends Scene {
         const light_position = vec4(light_movement, light_height, light_movement2, 1);
 
         const fountain_light_position = vec4(30, 5, 30, 1);
-        const cobble_light = vec4(10, 0, +5, 1);
+        const fox_light_position = vec4(-30, 6, 30, 1);
+        const ucla_light_position = vec4(-30, 6, -30, 1);
+        const other_light_position = vec4(30, 6, -30, 1);
 
-        program_state.lights = [new Light(light_position, light_color, light_intensity), 
-                                new Light(fountain_light_position, light_color, 100), 
-                                new Light(cobble_light, light_color, 100)];
-        const light_orb_transform2 = origin.times(Mat4.translation(30, 4, 30, 1)).times(Mat4.translation(30, 4, 30, 1)).times(Mat4.scale(1, 1, 1));
+        program_state.lights = [new Light(fountain_light_position, light_color, 100), 
+                                new Light(fox_light_position, light_color, 100),
+                                new Light(ucla_light_position, light_color, 100),
+                                new Light(other_light_position, light_color, 100)];
 
         const light_orb_transform = origin.times(Mat4.translation(light_movement, light_height, light_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
         this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
