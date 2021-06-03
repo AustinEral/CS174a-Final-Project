@@ -125,6 +125,7 @@ export class Final_Project extends Scene {
             triangle: new defs.Triangle(),
             box: new defs.Cube(),
             "robot": new Shape_From_File("assets/Atlas.obj"),
+            "fox": new Shape_From_File("assets/fox.obj"),
             "stone": new Shape_From_File("assets/Cobblestones3/Files/untitled.obj"),
             "fountain": new Shape_From_File("assets/fountain2/fountain.obj")
         };
@@ -183,6 +184,16 @@ export class Final_Project extends Scene {
         this.water = new Material(new defs.Fake_Bump_Map(2), {
             color: color(0, 0, 0, 0.8),
             ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.water_textures[0], 
+        });
+
+        this.num_fire_frames = 16;
+        this.fire_textures = [this.num_fire_frames];
+        for (let i = 0; i < this.num_water_frames; i++) {
+            this.fire_textures[i] = new Texture("assets/fire/" + i + ".gif");
+        }
+        this.fire = new Material(new defs.Fake_Bump_Map(2), {
+            color: color(0, 0, 0, 0.8),
+            ambient: 0.8, diffusivity: 1, specularity: 1, texture: this.fire_textures[0], 
         });
 
         this.num_ucla_frames = 110;
@@ -354,6 +365,10 @@ export class Final_Project extends Scene {
         let robot_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(15, 4, -15, 1));
         this.shapes.robot.draw(context, program_state, robot_transform, this.bumpy);
 
+        // Robot
+        let fox_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(-15, 4, +15, 1));
+        this.shapes.fox.draw(context, program_state, fox_transform, this.fire.override({texture: this.fire_textures[Math.floor(t/(water_frame_rate * 0.5) % this.num_water_frames)]}));
+        
 
         if (this.attached != undefined) {
             let desired = Mat4.inverse(this.attached().times(Mat4.translation(0, 0, 5)));
