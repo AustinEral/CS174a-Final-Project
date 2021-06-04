@@ -246,7 +246,7 @@ export class Final_Project extends Scene {
         const fountain_light_position = vec4(30, 5, 30, 1);
         const fox_light_position = vec4(-30, 6, 30, 1);
         const ucla_light_position = vec4(-30, 6, -30, 1);
-        const other_light_position = vec4(30, 8, -30, 1);
+        const other_light_position = vec4(30, 5, -25, 1);
 
         program_state.lights = [new Light(fountain_light_position, light_color, light_intensity), 
                                 new Light(fox_light_position, light_color, light_intensity),
