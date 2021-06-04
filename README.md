@@ -32,6 +32,12 @@ Our bump mapping works by using the original texture that is mapped to an object
 
 By creating an array of textures for an object, we can reassign textures to the object over time. We split videos and gif animations into their frames for each texture since glsl does not support animated gif texture rendering.
 
+### Naive Collision Detection 
+
+![animated img](./assets/collision.gif)
+
+We force the thrust to move our camera only if the player is within a specific range of coordinates, so as to make it more realistic, as if the player could not reach those areas of the scene. 
+
 ## Explore
 ### Fountain
 
