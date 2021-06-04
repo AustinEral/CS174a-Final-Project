@@ -961,8 +961,6 @@ a
             this.matrix().post_multiply(Mat4.rotation(-.05 * this.pitch, 1, 0, 0));
             this.inverse().pre_multiply(Mat4.rotation(+.05 * this.pitch, 1, 0, 0));
             // Now apply translation movement of the camera, in the newest local coordinate frame.
-            console.log( Math.sqrt(Math.pow(this.pos[0], 2),
-                                   Math.pow(this.pos[2], 2)) );
             if (this.thrust[1] === 1 && this.z_axis[2] > 0)
                 return;
             if(this.thrust[2] === -1  && this.pos[2] <= -30)

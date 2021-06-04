@@ -276,7 +276,7 @@ export class Final_Project extends Scene {
 
         const orb4_movement = 10*Math.cos(Math.PI*t/4);
         const orb4_movement2 = -50*Math.cos(-Math.PI*t/35);
-        const orb4_height = 40 + Math.cos(Math.PI*t/9);
+        const orb4_height = 28 + Math.cos(Math.PI*t/9);
 
         const orb4_transform = origin.times(Mat4.translation(orb4_movement, orb4_height, orb4_movement2, 1)).times(Mat4.scale(3, 3, 3));
         this.shapes.sphere4.draw(context, program_state, orb4_transform, this.materials.sphere4);
