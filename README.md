@@ -50,3 +50,9 @@ The marble floor uses a bump mapped texture that is rescaled over the object to 
 ![sky](./assets/sky.gif)
 
 The sky is a large sphere with a circular panoramic image mapped to the object. This avoids the visible issue where the texture meets the other side of itself. The sphere is not moving but the texture is rotating across the sphere.
+
+## (Fire) Fox
+
+![sky](./assets/fox.gif)
+
+We decided that animated textures could have been tested in any way, so we decided to create a fox and set its texture animation time to a faster timeframe, to check whether our computers could handle it. The model was imported using an .obj file. 
