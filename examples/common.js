@@ -865,7 +865,7 @@ const Movement_Controls = defs.Movement_Controls =
 
         show_explanation(document_element) {
         }
-
+a
         make_control_panel() {
             // make_control_panel(): Sets up a panel of interactive HTML elements, including
             // buttons with key bindings for affecting this scene, and live info readouts.
@@ -874,8 +874,7 @@ const Movement_Controls = defs.Movement_Controls =
                 + ", " + this.pos[2].toFixed(2));
             this.new_line();
             // The facing directions are surprisingly affected by the left hand rule:
-            this.live_string(box => box.textContent = "- Facing: " + ((this.z_axis[0] > 0 ? "West " : "East ")
-                + (this.z_axis[1] > 0 ? "Down " : "Up ") + (this.z_axis[2] > 0 ? "North" : "South")));
+            this.live_string(box => box.textContent = "- Facing: " + this.z_axis[0].toFixed(2) + ", " + this.z_axis[1].toFixed(2) + ", " + this.z_axis[2].toFixed(2));
             this.new_line();
             this.new_line();
 
@@ -962,19 +961,20 @@ const Movement_Controls = defs.Movement_Controls =
             this.matrix().post_multiply(Mat4.rotation(-.05 * this.pitch, 1, 0, 0));
             this.inverse().pre_multiply(Mat4.rotation(+.05 * this.pitch, 1, 0, 0));
             // Now apply translation movement of the camera, in the newest local coordinate frame.
-            if(this.thrust[2] === -1  && this.pos[2] <= -20)
+            console.log( Math.sqrt(Math.pow(this.pos[0], 2),
+                                   Math.pow(this.pos[2], 2)) );
+            if (this.thrust[1] === 1 && this.z_axis[2] > 0)
                 return;
-            if(this.thrust[0] === -1  && this.pos[0] <= -20)
+            if(this.thrust[2] === -1  && this.pos[2] <= -30)
                 return;
-            if(this.thrust[0] === 1  && this.pos[0] >= 20)
+            if(this.thrust[0] === -1  && this.pos[0] <= -30)
                 return;
-            if(this.thrust[2] === 1  && this.pos[2] >= 20)
+            if(this.thrust[0] === 1  && this.pos[0] >= 30)
                 return;
-                this.z_axis = vec4([0, 0, 1, 1]);
+            if(this.thrust[2] === 1  && this.pos[2] >= 30)
+                return;
             this.matrix().post_multiply(Mat4.translation(...this.thrust.times(-meters_per_frame)));
             this.inverse().pre_multiply(Mat4.translation(...this.thrust.times(+meters_per_frame)));
-            console.log(this.z_axis);
-            console.log(this.pos);
         }
 
         third_person_arcball(radians_per_frame) {

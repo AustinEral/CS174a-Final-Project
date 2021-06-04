@@ -137,9 +137,11 @@ export class Final_Project extends Scene {
             sphere1: new Material(new defs.Phong_Shader(),
                 {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(1,0.7,0,1), smoothness: 40, time: 0}),
             sphere2: new Material(new defs.Phong_Shader(),
-                {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(0,0.8,0.8,1)}),
+                {ambient: 1, diffusivity: 1, specularity: 0.5, color: color(0,0.8,0.8,1)}),
             sphere3: new Material(new defs.Phong_Shader(),
                 {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(0.8,0.2,0.4,1)}),
+            sphere4: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specularity: 1, color: color(0.9,1,0.1,1)}),
             light: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 0, specularity: 0, color: color(1,1,1,1)}),
         }
@@ -153,7 +155,7 @@ export class Final_Project extends Scene {
         });
         this.bumpy = new Material(new defs.Fake_Bump_Map(10), {
             color: color(.5, .5, .5, 1),
-            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/textures/bumpy.png")
+            ambient: .3, diffusivity: 1, specularity: 1, texture: new Texture("assets/bumpy.png")
         });
         this.stone = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 1),
@@ -162,7 +164,7 @@ export class Final_Project extends Scene {
         });
         this.cobble = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 1),
-            ambient: 0.7, diffusivity: 0.1, specularity: 0.2, texture: new Texture("assets/Cobblestones3/textures/BrickRound0105_5_S.jpg"), 
+            ambient: 0.7, diffusivity: 0.1, specularity: 1, texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S.jpg"), 
             bump_texture: new Texture("assets/Cobblestones3/Textures/BrickRound0105_5_S_BUMP.png")
         });
         this.tile = new Material(new defs.Bump_Map_Texure_x4(10), {
@@ -211,7 +213,7 @@ export class Final_Project extends Scene {
         });
         this.fountain = new Material(new defs.Fake_Bump_Map(10), {
             color: color(0, 0, 0, 1),
-            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/fountain/fountain.png"),
+            ambient: .3, diffusivity: 0.5, specularity: 1, texture: new Texture("assets/brick.png"),
         });
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 20), vec3(10, 0, 0), vec3(0, 5, 0)).times(Mat4.translation(0, -8, -10, 1));
     }
@@ -238,27 +240,46 @@ export class Final_Project extends Scene {
         const yellow = hex_color("#fac91a");
         
         // Lights
-        const light_movement = 3*Math.cos(Math.PI*t/2);
-        const light_movement2 = 3*Math.sin(Math.PI*t/2);
-        const light_height = 8 + Math.sin(Math.PI*t);
         const light_color = color(1, 0.8, 0.7, 1);
-        const light_intensity = 1000;
-        const light_position = vec4(light_movement, light_height, light_movement2, 1);
+        const light_intensity = 100;
 
         const fountain_light_position = vec4(30, 5, 30, 1);
         const fox_light_position = vec4(-30, 6, 30, 1);
         const ucla_light_position = vec4(-30, 6, -30, 1);
-        const other_light_position = vec4(30, 6, -30, 1);
+        const other_light_position = vec4(30, 8, -30, 1);
 
-        program_state.lights = [new Light(fountain_light_position, light_color, 100), 
-                                new Light(fox_light_position, light_color, 100),
-                                new Light(ucla_light_position, light_color, 100),
-                                new Light(other_light_position, light_color, 100)];
+        program_state.lights = [new Light(fountain_light_position, light_color, light_intensity), 
+                                new Light(fox_light_position, light_color, light_intensity),
+                                new Light(ucla_light_position, light_color, light_intensity),
+                                new Light(other_light_position, light_color, light_intensity)];
 
-        const light_orb_transform = origin.times(Mat4.translation(light_movement, light_height, light_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
-        this.shapes.sphere4.draw(context, program_state, light_orb_transform, this.materials.light.override({color: light_color}));
-        Mat4.translation(14, 4, -13.8, 1)
+        const orb1_movement = 30*Math.cos(Math.PI*t/16);
+        const orb1_movement2 = 30*Math.sin(Math.PI*t/16);
+        const orb1_height = 20 + Math.sin(Math.PI*t/4);
+    
+        const orb1_transform = origin.times(Mat4.translation(orb1_movement, orb1_height, orb1_movement2, 1)).times(Mat4.scale(0.5, 0.5, 0.5));
+        this.shapes.sphere4.draw(context, program_state, orb1_transform, this.materials.light.override({color: light_color}));
         
+        const orb2_movement = -40*Math.cos(Math.PI*t/16);
+        const orb2_movement2 = 40*Math.sin(Math.PI*t/16);
+        const orb2_height = 30 + Math.sin(Math.PI*t/4);
+
+        const orb2_transform = origin.times(Mat4.translation(orb2_movement, orb2_height, orb2_movement2, 1)).times(Mat4.scale(2, 2, 2));
+        this.shapes.sphere4.draw(context, program_state, orb2_transform, this.materials.sphere2);
+
+        const orb3_movement = -40*Math.cos(Math.PI*t/25);
+        const orb3_movement2 = 40*Math.sin(Math.PI*t/40);
+        const orb3_height = 30 + Math.cos(Math.PI*t/7);
+
+        const orb3_transform = origin.times(Mat4.translation(orb3_movement, orb3_height, orb3_movement2, 1)).times(Mat4.scale(5, 5, 5));
+        this.shapes.sphere4.draw(context, program_state, orb3_transform, this.materials.sphere3);
+
+        const orb4_movement = 10*Math.cos(Math.PI*t/4);
+        const orb4_movement2 = -50*Math.cos(-Math.PI*t/35);
+        const orb4_height = 40 + Math.cos(Math.PI*t/9);
+
+        const orb4_transform = origin.times(Mat4.translation(orb4_movement, orb4_height, orb4_movement2, 1)).times(Mat4.scale(3, 3, 3));
+        this.shapes.sphere4.draw(context, program_state, orb4_transform, this.materials.sphere4);
         // Room
         let room_size = [40, 10, 40]; // W,H,D
         let s_width = 0.5;
@@ -282,20 +303,6 @@ export class Final_Project extends Scene {
         // Front Wall
         let f_wall_transform = origin.times(Mat4.translation(0, room_size[1]+s_width, room_size[2]+s_width, 1)).times(Mat4.scale(room_size[0], room_size[1], s_width));
         this.shapes.box.draw(context, program_state, f_wall_transform, this.materials.room);
-
-        // Sphere
-        let sphere_transform1 = origin.times(Mat4.translation(-5, 4, -4, 1));
-        this.shapes.sphere4.draw(context, program_state, sphere_transform1, this.brick);
-        
-        let sphere_transform2 = origin.times(Mat4.translation(0, 9, -6, 1));
-        this.shapes.sphere4.draw(context, program_state, sphere_transform2, this.materials.sphere2);
-
-        let sphere_transform3 = origin.times(Mat4.translation(6, 7, -2, 1));
-        this.shapes.sphere4.draw(context, program_state, sphere_transform3, this.materials.sphere3);
-
-        // Stone
-        let stone_transform = origin.times(Mat4.scale(2, 2, 2)).times(Mat4.translation(3, 0.3, 3, 1));
-        this.shapes.stone.draw(context, program_state, stone_transform, this.stone);
 
         //Sky
         let sky_transform = origin.times(Mat4.scale(500, 500, 500));
