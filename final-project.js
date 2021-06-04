@@ -139,7 +139,7 @@ export class Final_Project extends Scene {
             sphere2: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, specularity: 0.5, color: color(0,0.8,0.8,1)}),
             sphere3: new Material(new defs.Phong_Shader(),
-                {ambient: 0.2, diffusivity: 1, specularity: 0.5, color: color(0.8,0.2,0.4,1)}),
+                {ambient: 0.8, diffusivity: 1, specularity: 0.5, color: color(0.8,0.2,0.4,1)}),
             sphere4: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, specularity: 1, color: color(0.9,1,0.1,1)}),
             light: new Material(new defs.Phong_Shader(),
